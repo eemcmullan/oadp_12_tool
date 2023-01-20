@@ -7,7 +7,8 @@ to achieve in OADP 1.2 with the asynchronous plugin enhancement.
 
 ## Prerequisites
 * Golang version 1.17+
-* Modified OADP Installation with a custom data mover controller and a custom velero image
+* Modified OADP Installation with a custom data mover controller and a custom 
+velero image
 
 Example DPA:
 ```
@@ -22,12 +23,29 @@ Example DPA:
 
 ## Flags
 This script supported customizable flags
-* `namespaces` - This is a comma separated list of namespaces to include in the backup
-* `restic-secret` - This is the name of the restic secret that gets created by the OADP operator when you enable the data mover. This contains the relevant volsync data to store the snapshots in s3. The name of this secret will be `<dpa-name>-volsync-restic`
-* `kubeconfig` - Specify a path for a kubeconfig aside from the default one used by the current shell
-* `concurrent` - Specifies the maximum number of running VolumeSnapshotBackups. Default is 12.
+* `namespaces` - This is a comma separated list of namespaces to include in the 
+backup
+* `restic-secret` - This is the name of the restic secret that gets created by 
+the OADP operator when you enable the data mover. This contains the relevant 
+volsync data to store the snapshots in s3. The name of this secret will be 
+`<dpa-name>-volsync-restic`
+  - *Note:* This is not the user-created data mover restic secret. This secret 
+will be created by the operator in the OADP namespace.
+* `kubeconfig` - Specify a path for a kubeconfig aside from the default one used 
+by the current shell
+* `concurrent` - Specifies the maximum number of running VolumeSnapshotBackups. 
+Default is 12.
 
 ## Workflow
+
+- Before starting, make sure all of the OADP data mover resources are cleaned from
+any previous use:
+
+- VolumeSnapshotBackups in the application namespace 
+- ReplicationSource in the OADP namespace
+- PVCs in the OADP namespace
+- VolumeSnapshots in the application and OADP namespace 
+- VolumeSnapshotContents
 
 The script works by first creating a Velero backup setting `includedNamespaces`
 to the comma separated list specified in the script arguments. This backup will
